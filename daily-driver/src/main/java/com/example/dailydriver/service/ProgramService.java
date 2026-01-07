@@ -41,6 +41,13 @@ public class ProgramService {
         return programRepository.save(existing);
     }
 
+    public AssistanceProgram toggleActive(Long id) {
+        AssistanceProgram program = findById(id);
+        program.setIsActive(!program.getIsActive());
+        return programRepository.save(program);
+    }
+
+
     public void delete(Long id) {
         programRepository.deleteById(id);
     }

@@ -18,9 +18,11 @@ public class ApplicationService {
     private final CitizenRepository citizenRepository;
     private final ProgramRepository programRepository;
 
-    public ApplicationService(ApplicationRepository applicationRepository,
-                              CitizenRepository citizenRepository,
-                              ProgramRepository programRepository) {
+    public ApplicationService(
+            ApplicationRepository applicationRepository,
+            CitizenRepository citizenRepository,
+            ProgramRepository programRepository
+    ) {
         this.applicationRepository = applicationRepository;
         this.citizenRepository = citizenRepository;
         this.programRepository = programRepository;
@@ -39,16 +41,10 @@ public class ApplicationService {
                         citizenId, programId
                 );
 
-        Application application;
+        Application application = existing.orElseGet(Application::new);
 
-        if (existing.isPresent()) {
-            application = existing.get();
-        } else {
-            application = new Application();
-            application.setCitizen(citizen);
-            application.setProgram(program);
-        }
-
+        application.setCitizen(citizen);
+        application.setProgram(program);
         application.setSubmissionDate(OffsetDateTime.now());
 
         if (isDraft) {
@@ -63,11 +59,9 @@ public class ApplicationService {
     }
 
     public Application finalSubmit(Long id) {
-
         Application application = findById(id);
-        application.setIsDraft(false);
         application.setStatus(ApplicationStatus.SUBMITTED);
-
+        application.setIsDraft(false);
         return applicationRepository.save(application);
     }
 
@@ -78,7 +72,7 @@ public class ApplicationService {
     }
 
     public List<Application> findAll() {
-        return applicationRepository.findAll();
+        return applicationRepository.findAll(); // 🔴 THIS IS THE KEY LINE
     }
 
     public Application findById(Long id) {
@@ -98,3 +92,4 @@ public class ApplicationService {
         applicationRepository.deleteById(id);
     }
 }
+

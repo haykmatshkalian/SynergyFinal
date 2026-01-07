@@ -1,5 +1,6 @@
 package com.example.dailydriver.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -10,21 +11,27 @@ public class AssistanceProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "program_id")
+    @JsonProperty("program_id")
     private Long programId;
 
     @Column(name = "program_name", nullable = false)
+    @JsonProperty("program_name")
     private String programName;
 
     @Column(name = "is_active", nullable = false)
+    @JsonProperty("is_active")
     private Boolean isActive;
 
     @Column(name = "min_age")
+    @JsonProperty("min_age")
     private Integer minAge;
 
     @Column(name = "max_age")
+    @JsonProperty("max_age")
     private Integer maxAge;
 
     @Column(name = "max_income_threshold")
+    @JsonProperty("max_income_threshold")
     private BigDecimal maxIncomeThreshold;
 
 

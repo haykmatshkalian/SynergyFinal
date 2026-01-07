@@ -52,6 +52,13 @@ public class ProgramController {
         return ResponseEntity.ok(new ProgramDto(updated));
     }
 
+    @PatchMapping("/{id}/active")
+    public ResponseEntity<ProgramDto> toggleActive(@PathVariable Long id) {
+        AssistanceProgram updated = programService.toggleActive(id);
+        return ResponseEntity.ok(new ProgramDto(updated));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         programService.delete(id);

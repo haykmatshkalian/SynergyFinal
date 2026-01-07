@@ -1,5 +1,6 @@
 package com.example.dailydriver.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,24 +12,31 @@ public class Citizen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "citizen_id")
+    @JsonProperty("citizen_id")
     private Long citizenId;
 
     @Column(name = "full_name", nullable = false)
+    @JsonProperty("full_name")
     private String fullName;
 
     @Column(name = "national_id", nullable = false, unique = true)
+    @JsonProperty("national_id")
     private String nationalId;
 
     @Column(name = "date_of_birth", nullable = false)
+    @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(name = "city")
+    @JsonProperty("city")
     private String city;
 
     @Column(name = "address")
+    @JsonProperty("address")
     private String address;
 
     @Column(name = "annual_income", nullable = false)
+    @JsonProperty("annual_income")
     private BigDecimal annualIncome;
 
     @ManyToOne

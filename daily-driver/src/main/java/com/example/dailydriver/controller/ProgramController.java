@@ -1,5 +1,6 @@
 package com.example.dailydriver.controller;
 
+import com.example.dailydriver.dto.ProgramDto;
 import com.example.dailydriver.entity.AssistanceProgram;
 import com.example.dailydriver.service.ProgramService;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/programs")
+@RequestMapping("programs")
 public class ProgramController {
 
     private final ProgramService programService;
@@ -19,27 +20,36 @@ public class ProgramController {
     }
 
     @PostMapping
-    public ResponseEntity<AssistanceProgram> create(@RequestBody AssistanceProgram program) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(programService.create(program));
+    public ResponseEntity<ProgramDto> create(@RequestBody AssistanceProgram program) {
+        AssistanceProgram created = programService.create(program);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ProgramDto(created));
     }
 
     @GetMapping
-    public ResponseEntity<List<AssistanceProgram>> getAll() {
-        return ResponseEntity.ok(programService.findAll());
+    public ResponseEntity<List<ProgramDto>> getAll() {
+        List<ProgramDto> result = programService.findAll()
+                .stream()
+                .map(ProgramDto::new)
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AssistanceProgram> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(programService.findById(id));
+    public ResponseEntity<ProgramDto> getById(@PathVariable Long id) {
+        AssistanceProgram program = programService.findById(id);
+        return ResponseEntity.ok(new ProgramDto(program));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AssistanceProgram> update(
+    public ResponseEntity<ProgramDto> update(
             @PathVariable Long id,
             @RequestBody AssistanceProgram program
     ) {
-        return ResponseEntity.ok(programService.update(id, program));
+        AssistanceProgram updated = programService.update(id, program);
+        return ResponseEntity.ok(new ProgramDto(updated));
     }
 
     @DeleteMapping("/{id}")

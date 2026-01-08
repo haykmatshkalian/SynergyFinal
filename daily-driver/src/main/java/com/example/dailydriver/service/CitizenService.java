@@ -1,8 +1,10 @@
 package com.example.dailydriver.service;
 
 import com.example.dailydriver.entity.Citizen;
+import com.example.dailydriver.entity.Household;
 import com.example.dailydriver.exception.BusinessException;
 import com.example.dailydriver.repository.CitizenRepository;
+import com.example.dailydriver.repository.HouseholdRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +13,15 @@ import java.util.List;
 public class CitizenService {
 
     private final CitizenRepository citizenRepository;
+    private final HouseholdRepository householdRepository;
 
-    public CitizenService(CitizenRepository citizenRepository) {
+    public CitizenService(CitizenRepository citizenRepository, HouseholdRepository householdRepository) {
         this.citizenRepository = citizenRepository;
+        this.householdRepository = householdRepository;
     }
+//    public CitizenService(CitizenRepository citizenRepository) {
+//        this.citizenRepository = citizenRepository;
+//    }
 
 
     public Citizen create(Citizen citizen) {
@@ -51,7 +58,17 @@ public class CitizenService {
         existing.setCity(updated.getCity());
         existing.setAddress(updated.getAddress());
         existing.setAnnualIncome(updated.getAnnualIncome());
-        existing.setHousehold(updated.getHousehold()); // linking allowed, logic elsewhere
+        existing.setHousehold(updated.getHousehold());
+
+        if (updated.getHousehold() == null) {
+            existing.setHousehold(null);
+        } else {
+            Household household = householdRepository
+                    .findById(updated.getHousehold().getId())
+                    .orElseThrow(() -> new BusinessException("Household not found"));
+
+            household.addMember(existing);
+        }
 
         return citizenRepository.save(existing);
     }

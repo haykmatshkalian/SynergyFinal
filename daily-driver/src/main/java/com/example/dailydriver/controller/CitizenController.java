@@ -20,72 +20,62 @@ public class CitizenController {
     }
 
     @PostMapping
-    public ResponseEntity<Citizen> create(@RequestBody Citizen citizen) {
-        Citizen created = citizenService.create(citizen);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<CitizenDto> create(@RequestBody Citizen citizen) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new CitizenDto(citizenService.create(citizen)));
     }
+
 
     @GetMapping
-    public ResponseEntity<List<CitizenDto>> getAll(
-            @RequestHeader(value = "X-PERMISSIONS", required = false) String permissions
-    ) {
-        boolean canViewIncome =
-                permissions != null && permissions.contains("CITIZEN:VIEW_SENSITIVE");
-
-        List<CitizenDto> result = citizenService.findAll()
-                .stream()
-                .map(c -> new CitizenDto(c, !canViewIncome))
-                .toList();
-
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<CitizenDto>> getAll() {
+        return ResponseEntity.ok(
+                citizenService.findAll()
+                        .stream()
+                        .map(CitizenDto::new)
+                        .toList()
+        );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CitizenDto> getById(
-            @PathVariable Long id,
-            @RequestHeader(value = "X-PERMISSIONS", required = false) String permissions
-    ) {
-        boolean canViewIncome =
-                permissions != null && permissions.contains("CITIZEN:VIEW_SENSITIVE");
-
-        Citizen citizen = citizenService.findById(id);
-        return ResponseEntity.ok(new CitizenDto(citizen, !canViewIncome));
-    }
 
     @GetMapping("/search")
     public ResponseEntity<CitizenDto> searchByNationalId(
-            @RequestParam String nationalId,
-            @RequestHeader(value = "X-PERMISSIONS", required = false) String permissions
+            @RequestParam String nationalId
     ) {
-        boolean canViewIncome =
-                permissions != null && permissions.contains("CITIZEN:VIEW_SENSITIVE");
-
-        Citizen citizen = citizenService.findByNationalId(nationalId);
-        return ResponseEntity.ok(new CitizenDto(citizen, !canViewIncome));
+        return ResponseEntity.ok(
+                new CitizenDto(citizenService.findByNationalId(nationalId))
+        );
     }
 
     @GetMapping("/search/name")
     public ResponseEntity<List<CitizenDto>> searchByName(
-            @RequestParam String name,
-            @RequestHeader(value = "X-PERMISSIONS", required = false) String permissions
+            @RequestParam String name
     ) {
-        boolean canViewIncome =
-                permissions != null && permissions.contains("CITIZEN:VIEW_SENSITIVE");
-
-        List<CitizenDto> result = citizenService.searchByName(name)
-                .stream()
-                .map(c -> new CitizenDto(c, !canViewIncome))
-                .toList();
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(
+                citizenService.searchByName(name)
+                        .stream()
+                        .map(CitizenDto::new)
+                        .toList()
+        );
     }
 
+
+    @GetMapping("/{id:\\d+}")
+    public ResponseEntity<CitizenDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                new CitizenDto(citizenService.findById(id))
+        );
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<Citizen> update(
+    public ResponseEntity<CitizenDto> update(
             @PathVariable Long id,
             @RequestBody Citizen citizen
     ) {
-        return ResponseEntity.ok(citizenService.update(id, citizen));
+        return ResponseEntity.ok(
+                new CitizenDto(citizenService.update(id, citizen))
+        );
     }
 
     @DeleteMapping("/{id}")
@@ -94,3 +84,4 @@ public class CitizenController {
         return ResponseEntity.noContent().build();
     }
 }
+
